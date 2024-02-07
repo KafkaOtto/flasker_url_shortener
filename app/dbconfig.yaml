@@ -1,0 +1,1 @@
+SQLALCHEMY_DATABASE_URI: 'mysql+pymysql://shortener:password@127.0.0.1:3306/shortener?charset=utf8mb4'

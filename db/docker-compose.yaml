@@ -1,0 +1,19 @@
+version: '1'
+
+services:
+  mysql:
+    image: mysql:latest
+    container_name: shortener_mysql
+    ports:
+      - 3306:3306
+    volumes:
+      - shortener-volume:/var/lib/mysql
+      - ./init_scripts/demo.sql:/docker-entrypoint-initdb.d/dump.sql
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: shortener
+      MYSQL_USER: shortener
+      MYSQL_PASSWORD: password
+
+volumes:
+  shortener-volume:
