@@ -1,23 +1,24 @@
 #!/usr/bin/env python3
 from flask import Blueprint, jsonify, request
 import services.user_service as user_service
-from models.user import User
+from models.user import Url
 from werkzeug.exceptions import HTTPException
 import json
 
 api = Blueprint('users', 'users')
 
 
-@api.route('/users', methods=['GET'])
-def api_get():
+@api.route('/', methods=['GET'])
+def api_get_all_urls():
     ''' Get all entities'''
-    users = user_service.get()
+    users = user_service.get_all_urls()
     return jsonify([user.as_dict() for user in users])
 
-@api.route('/users', methods=['POST'])
-def api_post():
+@api.route('/', methods=['POST'])
+def api_create_new_url():
     ''' Create entity'''
-    user = user_service.post(request.json)
+    user = user_service.create_new_url(request.json)
+    # return 
     return jsonify(user.as_dict())
 
 @api.route('/users/<string:id>', methods=['PUT'])

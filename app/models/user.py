@@ -2,11 +2,13 @@
 from dbconfig import db
 
 
-class User(db.Model):
+class Url(db.Model):
     ''' The data model'''
     # table name
-    __tablename__ = 'users'
+    __tablename__ = 'url_mapping'
     id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
-    email = db.Column(db.String(200), nullable=False)
+    long_url = db.Column(db.String(128), nullable=False)
+    short_url = db.Column(db.String(64), nullable=False)
+    expire_date = db.Column(db.String(64), nullable=True)
     def as_dict(self):
        return {c.name: getattr(self, c.name) for c in self.__table__.columns}

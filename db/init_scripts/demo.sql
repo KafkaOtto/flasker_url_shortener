@@ -23,3 +23,12 @@ INSERT INTO `users` VALUES (3, 'c', 'd', '$2a$10$.6mcEOKBNjsOBhHFhHxPDuv2QKscC9K
 INSERT INTO `users` VALUES (4, 'e', 'f', '$2a$10$.6mcEOKBNjsOBhHFhHxPDuv2QKscC9KZSqouKa0ZhBtwz6h54dJWq', '4@qq.com', 'USER');
 
 SET FOREIGN_KEY_CHECKS = 1;
+
+CREATE TABLE `url_mapping`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `long_url` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'original url',
+  `short_url` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'encoded url',
+  `expire_date` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT 'date of expiry',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE KEY `short_url` (`short_url`)
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
