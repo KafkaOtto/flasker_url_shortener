@@ -2,6 +2,7 @@
 from models.user import Url
 from dbconfig import db
 from werkzeug.exceptions import NotFound
+import base64
 
 def get_all_urls():
     '''
@@ -20,10 +21,19 @@ def create_new_url(body):
     :param body: request body
     :returns: the created entity
     '''
+    short_url = base64.b64encode(body['long_url'].encode())
+    body.update({'short_url': short_url})
+    body.update({'expire_date': None})
+    
     url = Url(**body)
-    print(body['long_url'])
-    # db.session.add(user)
-    # db.session.commit()
+    url.short_url = str(base64.b64encode(body['long_url'].encode()))[2:-1]
+    url.expire_date = '2024-12-31 23:59:59'
+
+    # print(url['long_url'])
+    # print(body)
+    db.session.add(url)
+    db.session.commit()
+    print(Url.query.all())
     return url
 
 # def update_shorturl(body):

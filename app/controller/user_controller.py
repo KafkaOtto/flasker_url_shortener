@@ -11,15 +11,15 @@ api = Blueprint('users', 'users')
 @api.route('/', methods=['GET'])
 def api_get_all_urls():
     ''' Get all entities'''
-    users = user_service.get_all_urls()
-    return jsonify([user.as_dict() for user in users])
+    urls = user_service.get_all_urls()
+    return jsonify([url.as_dict() for url in urls])
 
 @api.route('/', methods=['POST'])
 def api_create_new_url():
     ''' Create entity'''
-    user = user_service.create_new_url(request.json)
+    url = user_service.create_new_url(request.json)
     # return 
-    return jsonify(user.as_dict())
+    return jsonify(url.as_dict())
 
 @api.route('/users/<string:id>', methods=['PUT'])
 def api_put(id):
