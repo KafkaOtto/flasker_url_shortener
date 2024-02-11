@@ -32,8 +32,8 @@ def api_get_url_by_identifier(identifier):
     return url, 301
 
 @api.route('/<string:identifier>', methods=['PUT'])
-def api_update_expire_date_by_identifier(identifier):
-    entity = url_service.update_expire_data_by_identifier(identifier)
+def api_update_entity_by_identifier(identifier):
+    entity = url_service.update_entity_by_identifier(identifier, request.json)
     if entity is None:
         return "Identifier not found", 404
     return entity, 200

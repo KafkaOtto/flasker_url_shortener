@@ -47,14 +47,23 @@ def create_new_url(body):
     url = url.as_dict()
     return url
 
-def update_expire_data_by_identifier(identifier):
+def update_entity_by_identifier(identifier, body):
     id = hashids.decode(identifier)
     entity = Url.query.filter_by(id=id).first()
     if entity is None:
+        logging.info("identifier not found")
         return entity
-    current_time = datetime.now()
-    ten_years_later = current_time + timedelta(days=365 * 10)
-    entity.expire_date = ten_years_later
+    if body is None or body.get('long_url') is None or is_valid_url(body.get('long_url')) is False:
+        raise Exception("illegal input")
+    expire_date = body.get('expire_date')
+    if expire_date:
+        expire_date = datetime.strptime(expire_date, '%Y-%m-%d %H:%M:%S')
+    else:
+         ten_years_later = datetime.now() + timedelta(days=365 * 10)
+         expire_date = ten_years_later
+
+    entity.expire_date = expire_date
+    entity.long_url = body.get('long_url')
     db.session.commit()
     entity.id = hashids.encode(entity.id)
     entity = entity.as_dict()
