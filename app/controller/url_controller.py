@@ -2,39 +2,44 @@
 from flask import Blueprint, jsonify, request
 import services.url_service as url_service
 # from models.url import Url
-from werkzeug.exceptions import HTTPException
 import json
+import logging
 
-api = Blueprint('users', 'users')
+api = Blueprint('url_mapping', 'url_mapping')
 
-
-@api.route('/', methods=['GET']) # COMPLETED
+# request all the identifiers
+@api.route('/', methods=['GET'])
 def api_get_all_urls(): 
     ''' Get all entities'''
     urls = url_service.get_all_urls()
     return jsonify(urls)
 
-@api.route('/', methods=['POST']) # COMPLETED
+# create new identifier for long url
+@api.route('/', methods=['POST'])
 def api_create_new_url():
     ''' Create entity'''
     url = url_service.create_new_url(request.json)
+    if url is None:
+        return "invalid url", 400
     # return 
     return jsonify(url)
 
 @api.route('/<string:identifier>', methods=['GET'])
 def api_get_url_by_identifier(identifier):
-    url = url_service.get_url_by_identifier(request.json)
-    return jsonify(url)
+    url = url_service.get_url_by_identifier(identifier)
+    if url is None:
+        return "", 404
+    return url, 301
 
 @api.route('/<string:identifier>', methods=['DELETE'])
 def api_delete_by_identifier(identifier):
-    url = url_service.delete_by_identifier(request.json)
-    return jsonify(url)
+    if url_service.delete_by_identifier(identifier):
+        return "delete success", 204
+    return "identifier not found", 404
 
 @api.route('/', methods=['DELETE'])
 def api_delete_all_urls():
-    url = url_service.delete_all_urls()
-    return jsonify(url)
+   return "identifier not specify", 404
 
 
 
@@ -54,15 +59,7 @@ def api_delete_all_urls():
 #     res = url_service.delete(id)
 #     return jsonify(res)
 
-# @api.errorhandler(HTTPException)
-# def handle_exception(e):
-#     """Return JSON format for HTTP errors."""
-#     # start with the correct headers and status code from the error
-#     response = e.get_response()
-#     # replace the body with JSON
-#     response.data = json.dumps({
-#         'success': False,
-#         "message": e.description
-#     })
-#     response.content_type = "application/json"
-#     return response
+@api.errorhandler(Exception)
+def handle_exception(e):
+    logging.error("request error:", e)
+    return "error", 400

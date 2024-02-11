@@ -1,6 +1,9 @@
-#!/usr/bin/env python3
+# #!/usr/bin/env python3
+import re
+
 from models.url import Url
-from dbconfig import db
+from dbconfig import db, hashids
+from datetime import datetime
 from werkzeug.exceptions import NotFound
 import base64
 
@@ -19,58 +22,53 @@ def create_new_url(body):
     :param body: request body
     :returns: the created entity
     '''
-    short_url = base64.b64encode(body['long_url'].encode())
-    body.update({'short_url': short_url})
-    body.update({'expire_date': None})
-    
-    url = Url(**body)
-    url.short_url = str(base64.b64encode(body['long_url'].encode()))[2:-1]
-    url.expire_date = '2024-12-31 23:59:59'
+    if (body is None or body['long_url'] is None or is_valid_url(body['long_url'])) is False:
+        return None
+    existing_entity = Url.query.filter_by(long_url=body['long_url']).first()
+    if existing_entity is not None:
+        return existing_entity.as_dict()
+    expire_date = body['expire_date']
+    if expire_date:
+        expire_date = datetime.strptime(expire_date, '%Y-%m-%d %H:%M:%S')
+    else:
+        expire_date = datetime.strptime('2024-12-31 23:59:59', '%Y-%m-%d %H:%M:%S')
 
+    url = Url(long_url=body['long_url'], expire_date=expire_date)
     db.session.add(url)
     db.session.commit()
+    url.id = hashids.encode(url.id)
     url = url.as_dict()
     return url
 
-def get_url_by_identifier(body):
-    # get the corresponding entity by short url, if not exist then return None
-    # url = Url(**body)
-    try:
-        identifier = body['short_url']
-        entity = Url.query.filter_by(short_url = identifier).first()
-        
-    except Exception: 
-        identifier = body['long_url']
-        entity = Url.query.filter_by(long_url = identifier).first()
-        
-    finally:
-        if entity:
-            return entity.as_dict()
-        else:
-            return {'error': "this identifier cannot be found"}
 
+def get_url_by_identifier(identifier):
+    id = hashids.decode(identifier)
+    entity = Url.query.filter_by(id = id).first()
+    if entity is None:
+        return entity
+    return entity.long_url
 
-def delete_by_identifier(body):
-    try:
-        identifier = body['short_url']
-        entity = Url.query.filter_by(short_url = identifier).first()
-        
-    except Exception: 
-        identifier = body['long_url']
-        entity = Url.query.filter_by(long_url = identifier).first()
-        
-    finally:
-        if entity:
-            db.session.delete(entity)
-            db.session.commit()
-            return {'message': 'successfully deleted'}
-        else:
-            return {'error': "this identifier cannot be found"}
-        
+def delete_by_identifier(identifier):
+    id = hashids.decode(identifier)
+    entity = Url.query.filter_by(id = id).first()
+    if entity:
+        db.session.delete(entity)
+        db.session.commit()
+        return True
+    else:
+        return False
+
 def delete_all_urls():
     num_of_delete = db.session.query(Url).delete()
     db.session.commit()
     return {'number of deletion' : f'{num_of_delete}'}
+
+
+url_regex = re.compile(r'(?i)\b((?:[a-z][\w-]+:(?:/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:\'".,<>?«»“”‘’]))')
+
+
+def is_valid_url(url):
+    return url is not None and url_regex.search(url)
 
 # def get_url_by_long(body):
 #     # get the corresponding entity by short url, if not exist then return None

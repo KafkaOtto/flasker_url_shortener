@@ -27,13 +27,12 @@ SET FOREIGN_KEY_CHECKS = 1;
 CREATE TABLE `url_mapping`  (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `long_url` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'original url',
-  `short_url` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'encoded url',
-  `expire_date` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT 'date of expiry',
+  `expire_date` datetime NULL DEFAULT NULL COMMENT 'date of expiry',
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE KEY `short_url` (`short_url`)
+  UNIQUE KEY `long_url` (`long_url`)
 ) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
-INSERT INTO `url_mapping` VALUES (1, 'google.com', 'Z29vZ2xlLmNvbQ==', '2024-12-31 00:00:01');
-INSERT INTO `url_mapping` VALUES (2, 'baidu.com', 'YmFpZHUuY29t', '2024-12-31 00:00:02');
-INSERT INTO `url_mapping` VALUES (3, 'bing.com', 'YmluZy5jb20=', '2024-12-31 00:00:03');
+INSERT INTO `url_mapping` VALUES (1, 'google.com', '2024-12-31 00:00:01');
+INSERT INTO `url_mapping` VALUES (2, 'baidu.com', '2024-12-31 00:00:02');
+INSERT INTO `url_mapping` VALUES (3, 'bing.com', '2024-12-31 00:00:03');
 

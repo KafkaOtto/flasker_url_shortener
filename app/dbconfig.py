@@ -4,6 +4,7 @@ import yaml
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from hashids import Hashids
 
 
 app = Flask(__name__)
@@ -16,5 +17,9 @@ app.config['SQLALCHEMY_DATABASE_URI'] = config_obj['SQLALCHEMY_DATABASE_URI'] if
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
+
+secret_key = os.getenv('SECRET_KEY')
+app.config['SECRET_KEY'] = config_obj['SECRET_KEY'] if secret_key is None else secret_key
+hashids = Hashids(min_length=12, salt=app.config['SECRET_KEY'])
 
 migrate = Migrate(app, db)

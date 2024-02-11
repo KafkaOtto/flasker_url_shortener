@@ -8,7 +8,7 @@ class Url(db.Model):
     __tablename__ = 'url_mapping'
     id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
     long_url = db.Column(db.String(128), nullable=False)
-    short_url = db.Column(db.String(64), nullable=False)
-    expire_date = db.Column(db.String(64), nullable=True)
+    # short_url = db.Column(db.String(64), nullable=False)
+    expire_date = db.Column(db.DateTime, nullable=True)
     def as_dict(self):
        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
