@@ -23,10 +23,10 @@ def create_new_url(body):
     :param body: request body
     :returns: the created entity
     '''
-    if (body is None or body['long_url'] is None or is_valid_url(body['long_url'])) is False:
+    if (body is None or body.get('long_url') is None or is_valid_url(body.get('long_url'))) is False:
         return None
     current_time = datetime.now()
-    existing_entity = Url.query.filter_by(long_url=body['long_url']).first()
+    existing_entity = Url.query.filter_by(long_url=body.get('long_url')).first()
     if existing_entity is not None:
         if existing_entity.expire_date < current_time:
             ten_years_later = current_time + timedelta(days=365 * 10)
@@ -34,13 +34,13 @@ def create_new_url(body):
             db.session.commit()
         existing_entity.id = hashids.encode(existing_entity.id)
         return existing_entity.as_dict()
-    expire_date = body['expire_date']
+    expire_date = body.get('expire_date')
     if expire_date:
         expire_date = datetime.strptime(expire_date, '%Y-%m-%d %H:%M:%S')
     else:
         expire_date = datetime.strptime('2029-12-31 23:59:59', '%Y-%m-%d %H:%M:%S')
 
-    url = Url(long_url=body['long_url'], expire_date=expire_date)
+    url = Url(long_url=body.get('long_url'), expire_date=expire_date)
     db.session.add(url)
     db.session.commit()
     url.id = hashids.encode(url.id)
