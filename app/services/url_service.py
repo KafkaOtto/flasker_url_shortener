@@ -47,6 +47,18 @@ def create_new_url(body):
     url = url.as_dict()
     return url
 
+def update_expire_data_by_identifier(identifier):
+    id = hashids.decode(identifier)
+    entity = Url.query.filter_by(id=id).first()
+    if entity is None:
+        return entity
+    current_time = datetime.now()
+    ten_years_later = current_time + timedelta(days=365 * 10)
+    entity.expire_date = ten_years_later
+    db.session.commit()
+    entity.id = hashids.encode(entity.id)
+    entity = entity.as_dict()
+    return entity
 
 def get_url_by_identifier(identifier):
     id = hashids.decode(identifier)

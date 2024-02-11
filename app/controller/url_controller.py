@@ -31,6 +31,13 @@ def api_get_url_by_identifier(identifier):
         return "", 404
     return url, 301
 
+@api.route('/<string:identifier>', methods=['PUT'])
+def api_update_expire_date_by_identifier(identifier):
+    entity = url_service.update_expire_data_by_identifier(identifier)
+    if entity is None:
+        return "Identifier not found", 404
+    return entity, 200
+
 @api.route('/<string:identifier>', methods=['DELETE'])
 def api_delete_by_identifier(identifier):
     if url_service.delete_by_identifier(identifier):
