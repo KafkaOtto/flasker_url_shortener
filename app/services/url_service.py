@@ -1,9 +1,10 @@
 # #!/usr/bin/env python3
+import logging
 import re
 
 from models.url import Url
 from dbconfig import db, hashids
-from datetime import datetime
+from datetime import datetime, timedelta
 from werkzeug.exceptions import NotFound
 import base64
 
@@ -24,14 +25,20 @@ def create_new_url(body):
     '''
     if (body is None or body['long_url'] is None or is_valid_url(body['long_url'])) is False:
         return None
+    current_time = datetime.now()
     existing_entity = Url.query.filter_by(long_url=body['long_url']).first()
     if existing_entity is not None:
+        if existing_entity.expire_date < current_time:
+            ten_years_later = current_time + timedelta(days=365 * 10)
+            existing_entity.expire_date = ten_years_later
+            db.session.commit()
+        existing_entity.id = hashids.encode(existing_entity.id)
         return existing_entity.as_dict()
     expire_date = body['expire_date']
     if expire_date:
         expire_date = datetime.strptime(expire_date, '%Y-%m-%d %H:%M:%S')
     else:
-        expire_date = datetime.strptime('2024-12-31 23:59:59', '%Y-%m-%d %H:%M:%S')
+        expire_date = datetime.strptime('2029-12-31 23:59:59', '%Y-%m-%d %H:%M:%S')
 
     url = Url(long_url=body['long_url'], expire_date=expire_date)
     db.session.add(url)
@@ -43,9 +50,13 @@ def create_new_url(body):
 
 def get_url_by_identifier(identifier):
     id = hashids.decode(identifier)
+    current_time = datetime.now()
     entity = Url.query.filter_by(id = id).first()
     if entity is None:
         return entity
+    if entity.expire_date < current_time:
+        logging.info("identifier expired for", identifier)
+        return None
     return entity.long_url
 
 def delete_by_identifier(identifier):
@@ -68,7 +79,7 @@ url_regex = re.compile(r'(?i)\b((?:[a-z][\w-]+:(?:/{1,3}|[a-z0-9%])|www\d{0,3}[.
 
 
 def is_valid_url(url):
-    return url is not None and url_regex.search(url)
+    return url is not None and bool(url_regex.search(url))
 
 # def get_url_by_long(body):
 #     # get the corresponding entity by short url, if not exist then return None
