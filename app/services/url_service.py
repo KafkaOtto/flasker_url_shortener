@@ -32,6 +32,7 @@ def create_new_url(body):
     url = url.as_dict()
     return url
 
+<<<<<<< Updated upstream
 def get_url_by_identifier(body):
     # get the corresponding entity by short url, if not exist then return None
     # url = Url(**body)
@@ -49,6 +50,57 @@ def get_url_by_identifier(body):
         else:
             return {'error': "this identifier cannot be found"}
 
+=======
+def update_entity_by_identifier(identifier, body):
+    id = hashids.decode(identifier)
+    if id == ():
+        return None
+    entity = Url.query.filter_by(id=id).first()
+    if entity is None:
+        logging.info("identifier not found")
+        return entity
+    if body is None or body.get('long_url') is None or is_valid_url(body.get('long_url')) is False:
+        raise Exception("illegal input")
+    expire_date = body.get('expire_date')
+    if expire_date:
+        expire_date = datetime.strptime(expire_date, '%Y-%m-%d %H:%M:%S')
+    else:
+         ten_years_later = datetime.now() + timedelta(days=365 * 10)
+         expire_date = ten_years_later
+
+    entity.expire_date = expire_date
+    entity.long_url = body.get('long_url')
+    db.session.commit()
+    entity.id = hashids.encode(entity.id)
+    entity = entity.as_dict()
+    return entity
+
+def get_url_by_identifier(identifier):
+    id = hashids.decode(identifier)
+    print("----------")
+    print(id)
+    if id == ():
+        return None
+    current_time = datetime.now()
+    entity = Url.query.filter_by(id = id)
+    if entity is None:
+        return entity
+    entity = entity.first()
+    if entity.expire_date < current_time:
+        logging.info("identifier expired for", identifier)
+        return None
+    return entity.long_url
+
+def delete_by_identifier(identifier):
+    id = hashids.decode(identifier)
+    entity = Url.query.filter_by(id = id).first()
+    if entity:
+        db.session.delete(entity)
+        db.session.commit()
+        return True
+    else:
+        return False
+>>>>>>> Stashed changes
 
 def delete_by_identifier(body):
     try:

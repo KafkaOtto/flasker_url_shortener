@@ -33,7 +33,13 @@ CREATE TABLE `url_mapping`  (
   UNIQUE KEY `short_url` (`short_url`)
 ) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
+<<<<<<< Updated upstream
 INSERT INTO `url_mapping` VALUES (1, 'google.com', 'Z29vZ2xlLmNvbQ==', '2024-12-31 00:00:01');
 INSERT INTO `url_mapping` VALUES (2, 'baidu.com', 'YmFpZHUuY29t', '2024-12-31 00:00:02');
 INSERT INTO `url_mapping` VALUES (3, 'bing.com', 'YmluZy5jb20=', '2024-12-31 00:00:03');
+=======
+INSERT INTO `url_mapping` VALUES (1, 'www.google.com', '2024-12-31 00:00:01');
+INSERT INTO `url_mapping` VALUES (2, 'www.baidu.com', '2024-12-31 00:00:02');
+INSERT INTO `url_mapping` VALUES (3, 'www.bing.com', '2024-12-31 00:00:03');
+>>>>>>> Stashed changes
 
