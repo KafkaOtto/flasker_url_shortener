@@ -20,6 +20,5 @@ db = SQLAlchemy(app)
 
 secret_key = os.getenv('SECRET_KEY')
 app.config['SECRET_KEY'] = config_obj['SECRET_KEY'] if secret_key is None else secret_key
-hashids = Hashids(min_length=12, salt=app.config['SECRET_KEY'])
 
 migrate = Migrate(app, db)
