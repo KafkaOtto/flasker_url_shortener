@@ -1,4 +1,6 @@
-# Guidance of start the project
+# Guidance of starting the project
+
+## Database
 
 First, we need to make the docker engine running.
 
@@ -9,6 +11,8 @@ Then execute `docker-compose up` to initialize and start the DB.
 
 This should start the database. The DB is now running at port 3306, make sure the port is not occupied.
 
+## Backend service
+
 Then, please go to the app directory. `$cd ../app`
 
 And install the dependencies of the project. `$pip install -r requirements.txt`
@@ -17,7 +21,10 @@ Now you can start the service by executing: `$python /app.py`
 
 The service is running at 127.0.0.1:8000
 
+## Check running
+
 You can execute the test program to check if it's running normally.
+
 Or directly visit http://127.0.0.1:8000/, it should return the result of get_all_urls(). In this case, it should contain 3 records that we put in the DB during the initialization.
 
 
