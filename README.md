@@ -2,14 +2,14 @@
 
 First, we need to make the docker engine running.
 
-Then goes to the directory of DB: `$cd flasker_url_shortener/db`
+Then go to the directory of DB: `$cd flasker_url_shortener/db`
 
 
 Then execute `docker-compose up` to initialize and start the DB.
 
-This should start the database. The DB is running at port 3306, make sure it is not occupied.
+This should start the database. The DB is now running at port 3306, make sure the port is not occupied.
 
-Then, please goes to the app directory. `$cd ../app`
+Then, please go to the app directory. `$cd ../app`
 
 And install the dependencies of the project. `$pip install -r requirements.txt`
 
