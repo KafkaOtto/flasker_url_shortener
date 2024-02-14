@@ -32,7 +32,7 @@ CREATE TABLE `url_mapping`  (
   UNIQUE KEY `long_url` (`long_url`)
 ) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
-INSERT INTO `url_mapping` VALUES (1, 'google.com', '2024-12-31 00:00:01');
-INSERT INTO `url_mapping` VALUES (2, 'baidu.com', '2024-12-31 00:00:02');
-INSERT INTO `url_mapping` VALUES (3, 'bing.com', '2024-12-31 00:00:03');
+INSERT INTO `url_mapping` VALUES (1, 'http://google.com', '2024-12-31 00:00:01');
+INSERT INTO `url_mapping` VALUES (2, 'http://bat.com', '2024-12-31 00:00:02');
+INSERT INTO `url_mapping` VALUES (3, 'http://bing.com', '2024-12-31 00:00:03');
 
