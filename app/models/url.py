@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from dbconfig import db
+from appconfig import db
 
 
 class Url(db.Model):

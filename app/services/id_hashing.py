@@ -1,5 +1,6 @@
 # #!/usr/bin/env python3
 
+from appconfig import app
 INVALID_NUMBER = -1
 # Implementation of hashid algorithm
 class IdMapping():
@@ -47,4 +48,4 @@ class IdMapping():
             return INVALID_NUMBER
         return number
 
-id_mapping = IdMapping(salt='url_shortener_lab')
+id_mapping = IdMapping(salt=app.config.get('SECRET_KEY'))

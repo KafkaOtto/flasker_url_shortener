@@ -48,7 +48,7 @@ Or directly visit http://127.0.0.1:8000/, it should return the result of get_all
     │   |   ├── id_hashing.py           # Hashing
     │   |   └── url_services.py         # Database Query/Edit
     │   ├── app.py                      # Entry of Application
-    │   ├── dbconfig.py                 # Configuration of DB
+    │   ├── appconfig.py                 # Configuration of APP(db and secret key for hashing algorithm)
     │   ├── dbconfig.yaml        
     │   └── requirements.txt            # Required pip packages of the Project       
     ├── db/               

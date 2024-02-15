@@ -3,7 +3,7 @@ import logging
 import re
 
 from models.url import Url
-from dbconfig import db
+from appconfig import db
 from datetime import datetime, timedelta
 from .id_hashing import INVALID_NUMBER, id_mapping
 

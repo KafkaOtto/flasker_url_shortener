@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from dbconfig import app
+from appconfig import app
 from controller.url_controller import api
 
 # register the api
