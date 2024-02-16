@@ -2,6 +2,31 @@ SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 USE `shortener`;
 
+SET FOREIGN_KEY_CHECKS = 1;
+
+CREATE TABLE `url_mapping`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `long_url` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'original url',
+  `expire_date` datetime NULL DEFAULT NULL COMMENT 'date of expiry',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE KEY `long_url` (`long_url`)
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+CREATE TABLE `users`  (
+  `userid` int(11) NOT NULL AUTO_INCREMENT,
+  `username` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'users name',
+  `password` varchar(128)  CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'password',
+  PRIMARY KEY (`userid`) USING BTREE,
+  UNIQUE KEY `username` (`username`)
+);
+
+
+INSERT INTO `url_mapping` VALUES (5, 'http://google.com', '2024-12-31 00:00:01');
+INSERT INTO `url_mapping` VALUES (6, 'http://bat.com', '2024-12-31 00:00:02');
+INSERT INTO `url_mapping` VALUES (7, 'http://bing.com', '2024-12-31 00:00:03');
+
+INSERT INTO `users` VALUES (5, 'wxt', 'wxtwxt123123');
+
 -- DROP TABLE IF EXISTS `users`;
 -- CREATE TABLE `users`  (
 --   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -22,17 +47,5 @@ USE `shortener`;
 -- INSERT INTO `users` VALUES (3, 'c', 'd', '$2a$10$.6mcEOKBNjsOBhHFhHxPDuv2QKscC9KZSqouKa0ZhBtwz6h54dJWq', '3@qq.com', 'USER');
 -- INSERT INTO `users` VALUES (4, 'e', 'f', '$2a$10$.6mcEOKBNjsOBhHFhHxPDuv2QKscC9KZSqouKa0ZhBtwz6h54dJWq', '4@qq.com', 'USER');
 
-SET FOREIGN_KEY_CHECKS = 1;
 
-CREATE TABLE `url_mapping`  (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `long_url` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'original url',
-  `expire_date` datetime NULL DEFAULT NULL COMMENT 'date of expiry',
-  PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE KEY `long_url` (`long_url`)
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
-
-INSERT INTO `url_mapping` VALUES (1, 'http://google.com', '2024-12-31 00:00:01');
-INSERT INTO `url_mapping` VALUES (2, 'http://bat.com', '2024-12-31 00:00:02');
-INSERT INTO `url_mapping` VALUES (3, 'http://bing.com', '2024-12-31 00:00:03');
 
