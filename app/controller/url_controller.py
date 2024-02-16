@@ -7,6 +7,8 @@ import logging
 
 api = Blueprint('url_mapping', 'url_mapping')
 
+# asdasd
+
 # request all the identifiers
 @api.route('/', methods=['GET'])
 def api_get_all_urls(): 
