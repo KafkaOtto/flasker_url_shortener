@@ -1,27 +1,43 @@
 # #!/usr/bin/env python3
 import logging
 import re
+import json
 
+from flask import abort
+from .user_service import JWT_verification
 from models.url import Url
 from appconfig import db
 from datetime import datetime, timedelta
 from .id_hashing import INVALID_NUMBER, id_mapping
 
-def get_all_urls():
+def get_all_urls(headers):
+    
+    JWT = headers.get('Authorization')
+    
+    JWT_resolve = JWT_verification(JWT)
+    if JWT_resolve <= -1:
+        abort(403)
+        return None
+    
     '''
     Get all entities
     :returns: all entity
     '''
-    urls = Url.query.all()
+    urls = Url.query.filter_by(userid=JWT_resolve).all()
     urls = [url.as_dict() for url in urls]
     return urls
 
-def create_new_url(body):
+def create_new_url(headers, body):
     '''
     Create entity with body
     :param body: request body
     :returns: the created entity
     '''
+    JWT = headers.get('Authorization')
+    JWT_resolve = JWT_verification(JWT)
+    if JWT_resolve <= -1:
+        abort(403)
+    
     long_url = body.get('value')
     if (long_url is None or is_valid_url(long_url)) is False:
         return None
@@ -40,7 +56,7 @@ def create_new_url(body):
     else:
         expire_date = datetime.strptime('2029-12-31 23:59:59', '%Y-%m-%d %H:%M:%S')
 
-    url = Url(long_url=long_url, expire_date=expire_date)
+    url = Url(long_url=long_url, expire_date=expire_date, userid=JWT_resolve)
     db.session.add(url)
     db.session.commit()
     url.id = id_mapping.encode(url.id)

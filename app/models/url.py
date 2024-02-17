@@ -10,6 +10,7 @@ class Url(db.Model):
     long_url = db.Column(db.String(128), nullable=False)
     # short_url = db.Column(db.String(64), nullable=False)
     expire_date = db.Column(db.DateTime, nullable=True)
+    userid = db.Column(db.Integer(), nullable=False)
     def as_dict(self):
        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
    

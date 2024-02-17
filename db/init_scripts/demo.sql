@@ -4,28 +4,31 @@ USE `shortener`;
 
 SET FOREIGN_KEY_CHECKS = 1;
 
-CREATE TABLE `url_mapping`  (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `long_url` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'original url',
-  `expire_date` datetime NULL DEFAULT NULL COMMENT 'date of expiry',
-  PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE KEY `long_url` (`long_url`)
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
-
 CREATE TABLE `users`  (
   `userid` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'users name',
   `password` varchar(128)  CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'password',
   PRIMARY KEY (`userid`) USING BTREE,
   UNIQUE KEY `username` (`username`)
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+CREATE TABLE `url_mapping`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `long_url` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'original url',
+  `expire_date` datetime NULL DEFAULT NULL COMMENT 'date of expiry',
+  `userid` int(11) NOT NULL COMMENT 'The id of its user',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE KEY `long_url` (`long_url`),
+  CONSTRAINT User_to_Url FOREIGN KEY (userid) REFERENCES users(userid)
 );
 
-
-INSERT INTO `url_mapping` VALUES (5, 'http://google.com', '2024-12-31 00:00:01');
-INSERT INTO `url_mapping` VALUES (6, 'http://bat.com', '2024-12-31 00:00:02');
-INSERT INTO `url_mapping` VALUES (7, 'http://bing.com', '2024-12-31 00:00:03');
-
 INSERT INTO `users` VALUES (5, 'wxt', 'wxtwxt123123');
+INSERT INTO `users` VALUES (6, 'avl', 'avl456456');
+
+INSERT INTO `url_mapping` VALUES (5, 'http://google.com', '2024-12-31 00:00:01', 5);
+INSERT INTO `url_mapping` VALUES (6, 'http://bat.com', '2024-12-31 00:00:02', 5);
+INSERT INTO `url_mapping` VALUES (7, 'http://bing.com', '2024-12-31 00:00:03', 5);
+INSERT INTO `url_mapping` VALUES (8, 'http://apple.com', '2024-12-31 00:00:04', 6);
 
 -- DROP TABLE IF EXISTS `users`;
 -- CREATE TABLE `users`  (

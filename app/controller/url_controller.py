@@ -40,12 +40,12 @@ def api_user_login():
     if not JWT:
         return jsonify({'message': 'forbidden'}), 403
     else:
-        return jsonify({'JWT': JWT}), 200
+        return JWT, 200
 
 @api.route('/', methods=['GET'])
 def api_get_all_urls(): 
     ''' Get all entities'''
-    urls = url_service.get_all_urls()
+    urls = url_service.get_all_urls(request.headers)
     if urls == []:
         return jsonify({'message': ''})
     return jsonify(urls)
@@ -54,10 +54,11 @@ def api_get_all_urls():
 @api.route('/', methods=['POST'])
 def api_create_new_url():
     ''' Create entity'''
-    url = url_service.create_new_url(request.json)
+    url = url_service.create_new_url(request.headers, request.json)
     if url is None:
         return "invalid url", 400
-    # return 
+    # elif url['message'] is not None:
+    #     return 'forbidden', 403
     return jsonify(url), 201
 
 @api.route('/<string:identifier>', methods=['GET'])

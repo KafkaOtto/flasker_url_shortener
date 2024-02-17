@@ -1,19 +1,45 @@
 import logging
 import re
+import json
 
+from flask import jsonify
 from models.url import Url
 from models.user import User
 from appconfig import db
 from datetime import datetime, timedelta
-from .id_hashing import INVALID_NUMBER, id_mapping
+from .id_hashing import INVALID_NUMBER, id_mapping, IdMapping
 
-def password_hash(pswd):
+def password_hash(pswd:str) -> str:
     # please implement hash here...
     return pswd
 
-def JWT_generator(input):
+def JWT_generator(userid, pswd):
     # please implement generator here...
-    return "userid-"+str(input)
+    userMapping = IdMapping(salt=pswd)
+
+    JWT_header = json.dumps({"typ": "JWT"})
+    JWT_payload = json.dumps({'userid': str(userid)}) 
+    JWT_Signature = userMapping.encode(userid)
+
+    JWT = f'{JWT_header}.{JWT_payload}.{JWT_Signature}'
+    return JWT
+
+def JWT_verification(JWT):    
+    if JWT is None:
+        return -1
+    
+    JWT_header, JWT_payload, JWT_signature = JWT.split('.')
+    JWT_header = json.loads(JWT_header)
+    JWT_payload = json.loads(JWT_payload)
+    
+    userid = int(JWT_payload['userid'])
+    user = User.query.filter_by(userid = userid).first()
+    verifier = IdMapping(salt=user.password)
+    decoded_id = verifier.decode(JWT_signature)
+    if userid != decoded_id:
+        return -1
+    return userid
+        
 
 def create_new_user(body):
     username = body['username']
@@ -60,7 +86,7 @@ def user_login(body):
     if user.password != password:
         return None
     else:
-        JWT = JWT_generator(user.userid)
+        JWT = JWT_generator(user.userid, user.password)
         return JWT
     
     
