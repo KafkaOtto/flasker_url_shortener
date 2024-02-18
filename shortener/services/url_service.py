@@ -1,30 +1,27 @@
 # #!/usr/bin/env python3
 import logging
 import re
-import json
 
-from flask import abort
-from .user_service import JWT_verification
 from models.url import Url
 from appconfig import db
 from datetime import datetime, timedelta
 from .id_hashing import INVALID_NUMBER, id_mapping
 
-def get_all_urls(JWT_resolve):
+def get_all_urls():
     '''
     Get all entities
     :returns: all entity
     '''
-    urls = Url.query.filter_by(userid=JWT_resolve).all()
+    urls = Url.query.all()
     urls = [url.as_dict() for url in urls]
     return urls
 
-def create_new_url(JWT_resolve, body):
+def create_new_url(body):
     '''
     Create entity with body
     :param body: request body
     :returns: the created entity
-    '''    
+    '''
     long_url = body.get('value')
     if (long_url is None or is_valid_url(long_url)) is False:
         return None
@@ -43,7 +40,7 @@ def create_new_url(JWT_resolve, body):
     else:
         expire_date = datetime.strptime('2029-12-31 23:59:59', '%Y-%m-%d %H:%M:%S')
 
-    url = Url(long_url=long_url, expire_date=expire_date, userid=JWT_resolve)
+    url = Url(long_url=long_url, expire_date=expire_date)
     db.session.add(url)
     db.session.commit()
     url.id = id_mapping.encode(url.id)
@@ -100,12 +97,10 @@ def delete_by_identifier(identifier):
     else:
         return False
 
-def delete_all_urls(JWT_resolve):
-    urls = Url.query.filter_by(userid=JWT_resolve).all()
-    for url in urls:
-        db.session.delete(url)
+def delete_all_urls():
+    num_of_delete = db.session.query(Url).delete()
     db.session.commit()
-    return None
+    return {'number of deletion' : f'{num_of_delete}'}
 
 
 url_regex = re.compile(r'(?i)\b((?:[a-z][\w-]+:(?:/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:\'".,<>?«»“”‘’]))')

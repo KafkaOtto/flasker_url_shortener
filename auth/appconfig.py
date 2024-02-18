@@ -4,7 +4,6 @@ import yaml
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from hashids import Hashids
 
 
 app = Flask(__name__)
