@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, abort
 import services.url_service as url_service
 import services.user_service as user_service
 # from models.url import Url
@@ -45,7 +45,11 @@ def api_user_login():
 @api.route('/', methods=['GET'])
 def api_get_all_urls(): 
     ''' Get all entities'''
-    urls = url_service.get_all_urls(request.headers)
+    JWT_resolve = user_service.JWT_verification(request.headers.get('Authorization'))
+    if JWT_resolve <= -1:
+        return "forbidden", 403
+    
+    urls = url_service.get_all_urls(JWT_resolve)
     if urls == []:
         return jsonify({'message': ''})
     return jsonify(urls)
@@ -54,7 +58,11 @@ def api_get_all_urls():
 @api.route('/', methods=['POST'])
 def api_create_new_url():
     ''' Create entity'''
-    url = url_service.create_new_url(request.headers, request.json)
+    JWT_resolve = user_service.JWT_verification(request.headers.get('Authorization'))
+    if JWT_resolve <= -1:
+        return "forbidden", 403
+    
+    url = url_service.create_new_url(JWT_resolve, request.json)
     if url is None:
         return "invalid url", 400
     # elif url['message'] is not None:
@@ -70,6 +78,10 @@ def api_get_url_by_identifier(identifier):
 
 @api.route('/<string:identifier>', methods=['PUT'])
 def api_update_entity_by_identifier(identifier):
+    JWT_resolve = user_service.JWT_verification(request.headers.get('Authorization'))
+    if JWT_resolve <= -1:
+        return "forbidden", 403
+    
     data = json.loads(request.get_data())
     entity = url_service.update_entity_by_identifier(identifier, data)
     if entity is None:
@@ -78,14 +90,22 @@ def api_update_entity_by_identifier(identifier):
 
 @api.route('/<string:identifier>', methods=['DELETE'])
 def api_delete_by_identifier(identifier):
+    JWT_resolve = user_service.JWT_verification(request.headers.get('Authorization'))
+    if JWT_resolve <= -1:
+        return "forbidden", 403
+    
     if url_service.delete_by_identifier(identifier):
-        return "delete success", 204
+        return "\delete success", 204
     return "identifier not found", 404
 
 @api.route('/', methods=['DELETE'])
 def api_delete_all_urls():
-    url_service.delete_all_urls()
-    return "identifier not specify", 404
+    JWT_resolve = user_service.JWT_verification(request.headers.get('Authorization'))
+    if JWT_resolve <= -1:
+        return "forbidden", 403
+    
+    url_service.delete_all_urls(JWT_resolve)
+    return "deleted", 404
 
 
 @api.errorhandler(Exception)

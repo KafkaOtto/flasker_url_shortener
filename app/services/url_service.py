@@ -10,15 +10,7 @@ from appconfig import db
 from datetime import datetime, timedelta
 from .id_hashing import INVALID_NUMBER, id_mapping
 
-def get_all_urls(headers):
-    
-    JWT = headers.get('Authorization')
-    
-    JWT_resolve = JWT_verification(JWT)
-    if JWT_resolve <= -1:
-        abort(403)
-        return None
-    
+def get_all_urls(JWT_resolve):
     '''
     Get all entities
     :returns: all entity
@@ -27,17 +19,12 @@ def get_all_urls(headers):
     urls = [url.as_dict() for url in urls]
     return urls
 
-def create_new_url(headers, body):
+def create_new_url(JWT_resolve, body):
     '''
     Create entity with body
     :param body: request body
     :returns: the created entity
-    '''
-    JWT = headers.get('Authorization')
-    JWT_resolve = JWT_verification(JWT)
-    if JWT_resolve <= -1:
-        abort(403)
-    
+    '''    
     long_url = body.get('value')
     if (long_url is None or is_valid_url(long_url)) is False:
         return None
@@ -113,10 +100,12 @@ def delete_by_identifier(identifier):
     else:
         return False
 
-def delete_all_urls():
-    num_of_delete = db.session.query(Url).delete()
+def delete_all_urls(JWT_resolve):
+    urls = Url.query.filter_by(userid=JWT_resolve).all()
+    for url in urls:
+        db.session.delete(url)
     db.session.commit()
-    return {'number of deletion' : f'{num_of_delete}'}
+    return None
 
 
 url_regex = re.compile(r'(?i)\b((?:[a-z][\w-]+:(?:/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:\'".,<>?«»“”‘’]))')
