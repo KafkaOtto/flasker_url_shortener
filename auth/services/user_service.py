@@ -1,15 +1,10 @@
-import logging
-import re
-import json
-
-from flask import jsonify
 from models.user import User
 from appconfig import db
-from datetime import datetime, timedelta
+from .self_md5 import md5
 
 def password_hash(pswd:str) -> str:
     # please implement hash here...
-    return pswd
+    return md5.md5(pswd)
 
 def create_new_user(body):
     username = body['username']

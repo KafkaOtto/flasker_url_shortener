@@ -70,11 +70,10 @@ class JWT():
 
 jwt = JWT()
 
-
-if __name__ == "__main__":
-    user_name = "guozhinuan"
-    key = "test"
-    s = jwt.encode(user_name, key)
-    print(s)
-    encode_name = jwt.decode(s, 'test2')
-    print(encode_name)
+# if __name__ == "__main__":
+#     user_name = "guozhinuan"
+#     key = "test"
+#     s = jwt.encode(user_name, key)
+#     print(s)
+#     encode_name = jwt.decode(s, 'test2')
+#     print(encode_name)

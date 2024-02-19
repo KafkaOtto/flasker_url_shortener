@@ -21,7 +21,7 @@ services:
     ports:
       - "8001:8001"
     volumes:
-      - .:/code
+      - ./auth:/code
     environment:
       - SQLALCHEMY_DATABASE_URI=mysql+pymysql://shortener:password@mysql:3306/shortener?charset=utf8mb4
       - SECRET_KEY=url_shortener_lab
@@ -34,7 +34,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - .:/code
+      - .shortener:/code
     environment:
       - SQLALCHEMY_DATABASE_URI=mysql+pymysql://shortener:password@mysql:3306/shortener?charset=utf8mb4
       - SECRET_KEY=url_shortener_lab

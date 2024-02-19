@@ -16,7 +16,7 @@ def get_all_urls():
     urls = [url.as_dict() for url in urls]
     return urls
 
-def create_new_url(body):
+def create_new_url(username, body):
     '''
     Create entity with body
     :param body: request body
@@ -26,7 +26,7 @@ def create_new_url(body):
     if (long_url is None or is_valid_url(long_url)) is False:
         return None
     current_time = datetime.now()
-    existing_entity = Url.query.filter_by(long_url=long_url).first()
+    existing_entity = Url.query.filter_by(long_url=long_url, username=username).first()
     if existing_entity is not None:
         if existing_entity.expire_date < current_time:
             ten_years_later = current_time + timedelta(days=365 * 10)
@@ -40,18 +40,18 @@ def create_new_url(body):
     else:
         expire_date = datetime.strptime('2029-12-31 23:59:59', '%Y-%m-%d %H:%M:%S')
 
-    url = Url(long_url=long_url, expire_date=expire_date)
+    url = Url(long_url=long_url, expire_date=expire_date, username=username)
     db.session.add(url)
     db.session.commit()
     url.id = id_mapping.encode(url.id)
     url = url.as_dict()
     return url
 
-def update_entity_by_identifier(identifier, body):
+def update_entity_by_identifier(username, identifier, body):
     id = id_mapping.decode(identifier)
     if id == INVALID_NUMBER:
         return None
-    entity = Url.query.filter_by(id=id).first()
+    entity = Url.query.filter_by(id=id, username=username).first()
     if entity is None:
         logging.info("identifier not found")
         return entity
@@ -72,12 +72,12 @@ def update_entity_by_identifier(identifier, body):
     entity = entity.as_dict()
     return entity
 
-def get_url_by_identifier(identifier):
+def get_url_by_identifier(username, identifier):
     id = id_mapping.decode(identifier)
     if id == INVALID_NUMBER:
         return None
     current_time = datetime.now()
-    entity = Url.query.filter_by(id = id).first()
+    entity = Url.query.filter_by(id = id, username=username).first()
     if entity is None:
         return entity
     if entity.expire_date < current_time:
@@ -85,11 +85,11 @@ def get_url_by_identifier(identifier):
         return None
     return entity.long_url
 
-def delete_by_identifier(identifier):
+def delete_by_identifier(username, identifier):
     id = id_mapping.decode(identifier)
     if id == INVALID_NUMBER:
         return None
-    entity = Url.query.filter_by(id = id).first()
+    entity = Url.query.filter_by(id = id, username=username).first()
     if entity:
         db.session.delete(entity)
         db.session.commit()

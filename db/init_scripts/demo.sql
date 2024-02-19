@@ -16,17 +16,19 @@ CREATE TABLE `url_mapping`  (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `long_url` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'original url',
   `expire_date` datetime NULL DEFAULT NULL COMMENT 'date of expiry',
+  `username` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT 'users name',
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE KEY `long_url` (`long_url`)
+  UNIQUE KEY `user_long_url` (`long_url`, `username`)
 );
 
-INSERT INTO `users` VALUES (1, 'wxt', 'wxtwxt123123');
-INSERT INTO `users` VALUES (2, 'avl', 'avl456456');
 
-INSERT INTO `url_mapping` VALUES (1, 'http://google.com', '2024-12-31 00:00:01');
-INSERT INTO `url_mapping` VALUES (2, 'http://bat.com', '2024-12-31 00:00:02');
-INSERT INTO `url_mapping` VALUES (3, 'http://bing.com', '2024-12-31 00:00:03');
-INSERT INTO `url_mapping` VALUES (4, 'http://apple.com', '2024-12-31 00:00:04');
+INSERT INTO `users` VALUES (1, 'wxt', '16cb2816035b90698c93be3c9331a28d');
+INSERT INTO `users` VALUES (2, 'avl', 'e0bebd4964fd90f01f31875eef3bf68c');
+
+INSERT INTO `url_mapping` VALUES (1, 'http://google.com', '2024-12-31 00:00:01', 'wxt');
+INSERT INTO `url_mapping` VALUES (2, 'http://bat.com', '2024-12-31 00:00:02', 'wxt');
+INSERT INTO `url_mapping` VALUES (3, 'http://bing.com', '2024-12-31 00:00:03', 'avl');
+INSERT INTO `url_mapping` VALUES (4, 'http://apple.com', '2024-12-31 00:00:04', 'avl');
 
 -- DROP TABLE IF EXISTS `users`;
 -- CREATE TABLE `users`  (
