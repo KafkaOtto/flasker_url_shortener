@@ -35,7 +35,7 @@ def token_required(f):
 def api_create_new_user():
     new_user = user_service.create_new_user(request.json)
     if new_user == None:
-        return 'duplicate', 409
+        return jsonify({'detail': 'duplicate'}), 409
     else:
         return jsonify(new_user), 201
 
@@ -47,21 +47,29 @@ def api_get_all_users():
     return jsonify(users)
 
 @user_api.route('/users', methods=['PUT'])
-@token_required
-def api_reset_password(username):
+# @token_required
+def api_reset_password():
     result = user_service.reset_passwords(request.json)
     if not result:
-        return jsonify({'message': 'Old password incorrect'}), 403
+        return jsonify({'detail': 'forbidden'}), 403
     return jsonify({'message': 'successfully updated'}), 200
 
 @user_api.route('/users/login', methods=['POST'])
 def api_user_login():
     user = user_service.user_login(request.json)
     if not user:
-        return jsonify({'message': 'forbidden'}), 403
+        return jsonify({'detail': 'forbidden'}), 403
     else:
         token = jwt.encode(user['username'], app.config['SECRET_KEY'])
         return token, 200
+
+@user_api.route('/users', methods=['DELETE'])
+def api_delete_all_users():
+    res = user_service.delete_all_users()
+    if res['msg'] == 1:
+        return 200
+    else:
+        return 400
 
 @user_api.route('/auth', methods=['GET'])
 @token_required
