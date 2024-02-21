@@ -16,8 +16,8 @@ def token_required(f):
     def decorator(*args, **kwargs):
         token = None
         # ensure the jwt-token is passed with the headers
-        if 'token' in request.headers:
-            token = request.headers['token']
+        if 'Authorization' in request.headers:
+            token = request.headers['Authorization']
         if not token: # throw error if no token provided
             return {"message": "A valid token is missing!"}, 403
         try:
@@ -61,15 +61,16 @@ def api_user_login():
         return jsonify({'detail': 'forbidden'}), 403
     else:
         token = jwt.encode(user['username'], app.config['SECRET_KEY'])
-        return token, 200
+        # print(token)
+        return jsonify({'token': token}), 200
 
-@user_api.route('/users', methods=['DELETE'])
+@user_api.route('/users/all', methods=['DELETE'])
 def api_delete_all_users():
     res = user_service.delete_all_users()
-    if res['msg'] == 1:
-        return 200
+    if res == 1:
+        return jsonify({'msg': 'success'}), 200
     else:
-        return 400
+        return jsonify({'msg': 'fail'}), 400
 
 @user_api.route('/auth', methods=['GET'])
 @token_required

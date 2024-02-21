@@ -72,7 +72,7 @@ def api_delete_by_identifier(username, identifier):
 
 @api.route('/', methods=['DELETE'])
 @login_required
-def api_delete_all_urls():
+def api_delete_all_urls(username):
     url_service.delete_all_urls()
     return "identifier not specify", 404
 

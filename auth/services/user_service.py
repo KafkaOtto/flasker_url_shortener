@@ -55,6 +55,6 @@ def user_login(body):
 def delete_all_users():
     db.session.query(User).delete()
     db.session.commit()
-    return {'msg': 1}
+    return 1
     
     
