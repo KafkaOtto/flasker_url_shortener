@@ -129,6 +129,7 @@ if __name__ == "__main__":
 
     # Encode the JWT
     encoded_jwt = jwt.encode(username, private_key_pem, alg='RS256')
+    print(encoded_jwt)
     # Convert public key to PEM format (bytes)
     public_key_pem = public_key.public_bytes(
         encoding=serialization.Encoding.PEM,

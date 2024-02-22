@@ -29,8 +29,8 @@ def get_all_users():
 
 def reset_passwords(body):
     username = body['username']
-    old_password = password_hash(body['old-password'])
-    new_password = password_hash(body['new-password'])
+    old_password = password_hash(body['password'])
+    new_password = password_hash(body['new_password'])
 
     user = User.query.filter_by(username=username).first()
     if user is None:
@@ -52,5 +52,9 @@ def user_login(body):
         return None
     return user.as_dict()
 
-    
+
+def delete_all_users():
+    db.session.query(User).delete()
+    db.session.commit()
+    return {'msg': 1}
     

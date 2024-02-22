@@ -28,7 +28,8 @@ def login_required(f):
 
 # request all the identifiers
 @api.route('/', methods=['GET'])
-def api_get_all_urls():
+@login_required
+def api_get_all_urls(username):
     ''' Get all entities'''
     urls = url_service.get_all_urls()
     if urls == []:
@@ -72,7 +73,7 @@ def api_delete_by_identifier(username, identifier):
 
 @api.route('/', methods=['DELETE'])
 @login_required
-def api_delete_all_urls():
+def api_delete_all_urls(username):
     url_service.delete_all_urls()
     return "identifier not specify", 404
 
