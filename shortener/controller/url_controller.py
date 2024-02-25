@@ -3,26 +3,27 @@ from flask import Blueprint, jsonify, request
 import services.url_service as url_service
 from functools import wraps
 import json
+from appconfig import public_key_pem
+from services.jwt_service import jwt
 import logging
-import sys
-
 api = Blueprint('url_mapping', 'url_mapping')
 
 def login_required(f):
     @wraps(f)
     def decorator(*args, **kwargs):
-        # # Print cookies
-        # print(f"Cookies: {request.cookies}", file=sys.stderr)
-        #
-        # # Print headers
-        # print(f"Headers: {request.headers}", file=sys.stderr)
-        #
-        # # Correct logging syntax with f-strings for better readability
-        # logging.debug(f"Cookies: {request.cookies}")
-        # logging.debug(f"Headers: {request.headers}")
-        username = request.cookies.get('username')
-        if not username: # throw error if no token provided
-            return {"message": "You need to login!"}, 403
+        token = None
+        # ensure the jwt-token is passed with the headers
+        if 'Authorization' in request.headers:
+            token = request.headers['Authorization']
+        if not token: # throw error if no token provided
+            return {"message": "A valid token is missing!"}, 403
+        try:
+           # decode the token to obtain user name
+            username = jwt.decode(token, public_key_pem)
+        except Exception as e:
+            logging.error("invalid token", e)
+            return {"message": "Invalid token!"}, 403
+         # Return the user information attached to the token
         return f(username, *args, **kwargs)
     return decorator
 

@@ -4,7 +4,7 @@ import logging
 from flask import Blueprint, jsonify, request, make_response
 import services.user_service as user_service
 from services.jwt_service import jwt
-from appconfig import app
+from appconfig import private_key_pem, public_key_pem
 from functools import wraps
 
 
@@ -22,7 +22,7 @@ def token_required(f):
             return {"message": "A valid token is missing!"}, 403
         try:
            # decode the token to obtain user name
-            username = jwt.decode(token, app.config['SECRET_KEY'])
+            username = jwt.decode(token, public_key_pem)
         except Exception as e:
             logging.error("invalid token", e)
             return {"message": "Invalid token!"}, 403
@@ -61,7 +61,7 @@ def api_user_login():
         return jsonify({'detail': 'forbidden'}), 403
     else:
         # token = jwt.encode(user['username'], app.config['SECRET_KEY'])
-        token = jwt.encode(user['username'], app.config['SECRET_KEY'])
+        token = jwt.encode(user['username'], private_key_pem, 'RS256')
         return jsonify({'token': token}), 200
 
 @user_api.route('/users/all', methods=['DELETE'])
