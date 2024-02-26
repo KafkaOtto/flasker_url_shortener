@@ -2,7 +2,7 @@
 from appconfig import app
 from controller.user_controller import user_api
 
-# register the api
+# register the api 1
 app.register_blueprint(user_api)
 
 if __name__ == '__main__':
