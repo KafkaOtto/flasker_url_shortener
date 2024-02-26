@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: shortener-ingress
+  annotations:
+spec:
+  tls:
+    - hosts:
+        - shortener.local
+      secretName: shortener-tls-secret
+  rules:
+    - host: shortener.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: shortener-url
+                port:
+                  number: 8000
+          - path: /users
+            pathType: Prefix
+            backend:
+              service:
+                name: shortener-auth
+                port:
+                  number: 8001

@@ -6,21 +6,29 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from cryptography.hazmat.primitives import serialization
 
-
 app = Flask(__name__)
 
 config_obj = yaml.load(open('dbconfig.yaml'), Loader=yaml.Loader)
 
+db_username = os.getenv('DB_USERNAME') or config_obj.get('DB_USERNAME')
+db_password = os.getenv('DB_PASSWORD') or config_obj.get('DB_PASSWORD')
+db_server = os.getenv('DB_SERVER') or config_obj.get('DB_SERVER')
+db_name = os.getenv('DB_NAME') or config_obj.get('DB_NAME')
+
 # override the environment variables
-database_url = os.getenv('SQLALCHEMY_DATABASE_URI')
-app.config['SQLALCHEMY_DATABASE_URI'] = config_obj['SQLALCHEMY_DATABASE_URI'] if database_url is None else database_url
+db_uri = 'mysql+pymysql://{username}:{password}@{server}:3306/{db_name}?charset=utf8mb4'
+SQLALCHEMY_DATABASE_URI = db_uri.format(
+    username=db_username,
+    password=db_password,
+    server=db_server,
+    db_name=db_name
+)
+app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY') or config_obj.get('SECRET_KEY')
+
 
 db = SQLAlchemy(app)
-
-secret_key = os.getenv('SECRET_KEY')
-app.config['SECRET_KEY'] = config_obj['SECRET_KEY'] if secret_key is None else secret_key
-
 migrate = Migrate(app, db)
 
 with open("public_key.pem", "rb") as key_file:

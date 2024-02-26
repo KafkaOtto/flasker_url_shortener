@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shortener-auth
+  labels:
+    app: shortener-auth
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: shortener-auth
+  template:
+    metadata:
+      labels:
+        app: shortener-auth
+    spec:
+      containers:
+        - name: shortener-auth
+          image: ottokafka2/shortener-auth:0.0.1
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 8000
+          env:
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-pass
+                  key: mysql-user-password
+            - name: DB_SERVER
+              valueFrom:
+                configMapKeyRef:
+                  name:  mysql-config-map
+                  key: mysql-server
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name:  mysql-config-map
+                  key: mysql-database-name
+            - name: DB_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: mysql-config-map
+                  key: mysql-user-username
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: shortener-auth
+  labels:
+    app: shortener-auth
+spec:
+#  type: NodePort
+  selector:
+    app: shortener-auth
+  ports:
+    - port: 8000
