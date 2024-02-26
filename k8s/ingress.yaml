@@ -3,6 +3,7 @@ kind: Ingress
 metadata:
   name: shortener-ingress
   annotations:
+    kubernetes.io/ingress.class: "nginx"
 spec:
   tls:
     - hosts:
