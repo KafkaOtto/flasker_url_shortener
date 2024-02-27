@@ -54,4 +54,6 @@ spec:
   selector:
     app: shortener-url
   ports:
-    - port: 8001
+    - protocol: TCP
+      port: 80
+      targetPort: 8001
