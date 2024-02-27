@@ -50,7 +50,7 @@ metadata:
   labels:
     app: shortener-auth
 spec:
-  type: NodePort
+  type: LoadBalancer
   selector:
     app: shortener-auth
   ports:
