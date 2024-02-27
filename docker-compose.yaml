@@ -14,42 +14,42 @@ services:
       MYSQL_DATABASE: shortener
       MYSQL_USER: shortener
       MYSQL_PASSWORD: password
-#  users:
-#    build:
-#      context: ./auth
-#      dockerfile: Dockerfile
-#    ports:
-#      - "8001:8001"
-#    volumes:
-#      - ./auth:/code
-#    environment:
-#      - SQLALCHEMY_DATABASE_URI=mysql+pymysql://shortener:password@mysql:3306/shortener?charset=utf8mb4
-#      - SECRET_KEY=url_shortener_lab
-#    depends_on:
-#      - mysql
-#  shortener:
-#    build:
-#      context: ./shortener
-#      dockerfile: Dockerfile
-#    ports:
-#      - "8000:8000"
-#    volumes:
-#      - .shortener:/code
-#    environment:
-#      - SQLALCHEMY_DATABASE_URI=mysql+pymysql://shortener:password@mysql:3306/shortener?charset=utf8mb4
-#      - SECRET_KEY=url_shortener_lab
-#    depends_on:
-#      - mysql
-#  nginx:
-#    image: nginx:latest
-#    volumes:
-#      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
-#      - ./static:/usr/share/nginx/html
-#    ports:
-#      - "80:80"
-#    depends_on:
-#      - users
-#      - shortener
+  users:
+    build:
+      context: ./auth
+      dockerfile: Dockerfile
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./auth:/code
+    environment:
+      - SQLALCHEMY_DATABASE_URI=mysql+pymysql://shortener:password@mysql:3306/shortener?charset=utf8mb4
+      - SECRET_KEY=url_shortener_lab
+    depends_on:
+      - mysql
+  shortener:
+    build:
+      context: ./shortener
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - .shortener:/code
+    environment:
+      - SQLALCHEMY_DATABASE_URI=mysql+pymysql://shortener:password@mysql:3306/shortener?charset=utf8mb4
+      - SECRET_KEY=url_shortener_lab
+    depends_on:
+      - mysql
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./static:/usr/share/nginx/html
+    ports:
+      - "80:80"
+    depends_on:
+      - users
+      - shortener
 
 volumes:
   shortener-volume:
