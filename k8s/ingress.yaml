@@ -5,10 +5,10 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: "nginx"
 spec:
-#  tls:
-#    - hosts:
-#        - shortener.local
-#      secretName: shortener-tls-secret
+  tls:
+    - hosts:
+        - shortener.local
+      secretName: shortener-tls-secret
   rules:
     - host: shortener.local
       http:
