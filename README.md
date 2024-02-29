@@ -79,7 +79,15 @@ kubectl apply -f nginx.yaml
     │   |   └── demo.sql                # Initialization of DB
     │   └── docker_compose.yaml         # Setup the DB
     ├── nginx/               
-    │   └── default.conf/               # The configuration of Nginx         
+    │   └── default.conf/               # The configuration of Nginx
+    ├── k8s/               
+    │   └── auth_deployment.yaml        # k8s deployment of auth service
+    │   ├── db-deployments.yaml         # k8s deployment of db service
+    │   ├── db-secrets.yaml             # db passwords
+    │   ├── db-storage.yaml             # db persistent volumn
+    │   ├── mysql-configmap.yaml        # db configuration: db name, db users
+    │   ├── nginx.yaml                  # nginx service k8s deployments
+    │   └── shortener_deployment.yaml   # k8s deployment of user service
     ├── README.md            
     └── .gitignore   
 ```
