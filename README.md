@@ -6,7 +6,7 @@ hash id into alphabets.(In the project, for readability the default alphabets ar
 The project support multiple users access with DB pre-checking and unique key constraint on column long_url.
 The length of shorten url ranges in [1, 6].
 
-# Guidance of starting the project
+# Guidance of starting the project by docker compose
 
 ## Start the services
 
@@ -27,6 +27,22 @@ The service is now running at http://127.0.0.1:80/
 You can execute the test program to check if it's running normally (please note the port is 80).
 
 Also, if you want to use postman to test the APIs, just follow the input and endpoints in the assignment guidance. If you want to access the URL services, please login first and then include the JWT in the header.
+
+
+# Guidance to deploy services into kubernetes
+
+1. Follow instruction in https://kubernetes.io/docs/tasks/administer-cluster/certificates/#openssl to generate certificate for nginx service.
+2. add secret to kubernetes by `kubectl create secret tls tls-certs — cert=server.pem — key=server.key`
+3. apply the yaml files into kubernetes by following instruction:
+```shell
+kubectl apply -f mysql-configmap.yaml
+kubectl apply -f db-secrets.yaml
+kubectl apply -f db-storage.yaml
+kubectl apply -f db-deployment.yaml
+kubectl apply -f shortener_deployment.yaml
+kubectl apply -f auth_deployment.yaml
+kubectl apply -f nginx.yaml
+```
 
 # Structure of the project
 ```
