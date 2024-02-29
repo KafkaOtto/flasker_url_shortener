@@ -1,11 +1,18 @@
 version: '3.8'
 
+x-common-env: &common-env # Define common environment variables
+  DB_SERVER: mysql
+  DB_NAME: shortener
+  DB_USERNAME: shortener
+  DB_PASSWORD: password
+  SECRET_KEY: url_shortener_lab
+
 services:
   mysql:
     image: mysql:latest
     container_name: shortener_mysql
-    ports:
-      - 3306:3306
+#    ports:
+#      - 3306:3306
     volumes:
       - shortener-volume:/var/lib/mysql
       - ./db/init_scripts/demo.sql:/docker-entrypoint-initdb.d/dump.sql
@@ -14,32 +21,35 @@ services:
       MYSQL_DATABASE: shortener
       MYSQL_USER: shortener
       MYSQL_PASSWORD: password
+    networks:
+      - shortener-net
+
   users:
     build:
       context: ./auth
       dockerfile: Dockerfile
-    ports:
-      - "8001:8001"
     volumes:
       - ./auth:/code
     environment:
-      - SQLALCHEMY_DATABASE_URI=mysql+pymysql://shortener:password@mysql:3306/shortener?charset=utf8mb4
-      - SECRET_KEY=url_shortener_lab
+      <<: *common-env
     depends_on:
       - mysql
+    networks:
+      - shortener-net
+
   shortener:
     build:
       context: ./shortener
       dockerfile: Dockerfile
-    ports:
-      - "8000:8000"
     volumes:
-      - .shortener:/code
+      - ./shortener:/code
     environment:
-      - SQLALCHEMY_DATABASE_URI=mysql+pymysql://shortener:password@mysql:3306/shortener?charset=utf8mb4
-      - SECRET_KEY=url_shortener_lab
+      <<: *common-env # Reuse the common environment variables
     depends_on:
       - mysql
+    networks:
+      - shortener-net
+
   nginx:
     image: nginx:latest
     volumes:
@@ -50,6 +60,11 @@ services:
     depends_on:
       - users
       - shortener
-
+    networks:
+      - shortener-net
 volumes:
   shortener-volume:
+networks:
+  shortener-net:
+    name: shortener-net
+    driver: bridge
