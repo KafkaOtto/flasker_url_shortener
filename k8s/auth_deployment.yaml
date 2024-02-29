@@ -20,7 +20,7 @@ spec:
           imagePullPolicy: Always
           ports:
             - name: http
-              containerPort: 8000
+              containerPort: 8001
           env:
             - name: DB_PASSWORD
               valueFrom:
@@ -55,5 +55,5 @@ spec:
     app: shortener-auth
   ports:
     - protocol: TCP
-      port: 8000
-      targetPort: 8000
+      port: 8001
+      targetPort: 8001
